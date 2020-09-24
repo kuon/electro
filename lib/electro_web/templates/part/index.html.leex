@@ -1,0 +1,85 @@
+<div class="flex max-h-full w-full">
+  <div class="flex flex-col flex-shrink-0 min-w-64">
+    <div class="h-12 border-r-12 border-gray-200 p-1">
+      add category
+    </div>
+    <ul class="flex flex-col flex-grow text-sm overflow-y-scroll scroller">
+      <%= for id <- @categories do %>
+      <% c = @category_index[id] %>
+      <% indent = c.depth * 1.2 %>
+      <% klasses = if id == @selected_category_id do %>
+      bg-gray-200
+      <% else %>
+      cursor-pointer
+      <% end %>
+      <li class="p-1 <%= klasses %>"
+        style="margin-left: <%= indent %>em"
+        phx-click="select_category"
+        phx-value-id="<%= id %>"><%= c.name %></li>
+      <% end %>
+    </ul>
+  </div>
+  <div class="flex flex-col flex-grow">
+    <div class="p-2 flex w-full h-12 flex-shrink-0 border-r-12 border-gray-200">
+      <div class="p-1 mr-4">
+        add part
+      </div>
+      <form phx-change="search"
+        class="flex flex-grow">
+        <input type="search"
+          name="q"
+          value="<%= @query %>"
+          placeholder="search"
+          class="text-black bg-gray-200 p-1 w-full">
+      </form>
+    </div>
+
+    <ul class="flex flex-col flex-grow text-sm overflow-y-scroll scroller">
+      <%= case @results do %>
+      <% [] -> %>
+      <li class="px-2 py-1 font-bold">No result</li>
+      <% res -> %>
+      <%= for id <- res do %>
+      <% p = @part_index[id] %>
+      <% klasses = if id == @selected_part_id do %>
+      bg-gray-200
+      <% else %>
+      cursor-pointer
+      <% end %>
+      <li class="px-2 py-1 <%= klasses %>"
+        phx-click="select_part"
+        phx-value-id="<%= id %>"><%= p.name %></li>
+      <% end %>
+      <% end %>
+    </ul>
+  </div>
+  <div class="flex flex-col w-128 max-w-128 flex-shrink-0 overflow-y-scroll scroller">
+    <%= if @selected_part_id do %>
+    <% p = @part_index[@selected_part_id] %>
+    <%= f = form_for :part, "#", [phx_submit: :save_part, class: "flex flex-col"] %>
+    <%= for field <- [:id, :name, :mpn, :location, :description, :stock] do %>
+    <div class="flex p-1">
+      <%= label f, field, class: "w-32 p-1" %>
+      <%= text_input f, field,
+          value: p[field],
+          readonly: field == :id,
+          class: "bg-gray-200 text-black p-1 flex-grow"
+      %>
+    </div>
+    <% end %>
+    <%= submit "Save", class: "bg-blue-400 m-2 p-1 text-white font-bold" %>
+    </form>
+    <ul class="flex flex-col text-xs">
+      <%= for a <- p.attachements do %>
+        <li class="px-2 py-1 cursor-pointer underline text-blue-700"
+            phx-click="open_file"
+            phx-value-path="<%= a.path |> Base.encode64() %>"><%= a.name %></li>
+      <% end %>
+    </ul>
+    <% else %>
+    <div class="flex self-center flex-grow">
+      <p class="font-bold self-center">No part selected</p>
+    </div>
+    <% end %>
+  </div>
+</div>
