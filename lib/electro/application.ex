@@ -10,6 +10,7 @@ defmodule Electro.Application do
       # Start the Telemetry supervisor
       ElectroWeb.Telemetry,
       # Start the PubSub system
+      Electro.Inventory,
       {Phoenix.PubSub, name: Electro.PubSub},
       # Start the Endpoint (http/https)
       ElectroWeb.Endpoint

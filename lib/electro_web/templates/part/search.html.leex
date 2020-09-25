@@ -1,0 +1,54 @@
+<p class="mb-2 font-bold">Search Octopart</p>
+<form phx-submit="search"
+  phx-update="set_query"
+  class="flex flex-grow">
+  <input type="search"
+    name="q"
+    value="<%= @query %>"
+    placeholder="part number"
+    class="text-black bg-gray-200 py-1 px-3 flex-grow">
+
+  <%= submit "Search", class: "bg-blue-500 ml-2 py-1 px-3 text-white font-bold text-center" %>
+  <button phx-click="new_part"
+    class="bg-gray-500 text-white font-bold py-1 px-3 ml-2 self-start">
+    Add part manually</button>
+</form>
+<div class="h-56 min-h-56 flex-shrink-0 flex justify-center mt-8">
+  <%= case @results do %>
+  <% [] -> %>
+  <div class="flex flex-col">
+    <p class="font-bold self-center">No result</p>
+  </div>
+  <% res -> %>
+  <div class="flex flex-col">
+    <table class="max-w-full w-full flex-shrink table-fixed text-sm">
+      <%= for {r, idx} <- Enum.with_index(res) do %>
+      <tr <%= if idx == @selected_idx do %>
+        class="bg-gray-200 cursor-default"
+        <% else %>
+        class="cursor-pointer"
+        phx-click="select"
+        phx-value-idx="<%= idx %>"
+        <% end %>>
+        <td class="p-1 truncate w-24"><%= r.manufacturer %></td>
+        <td class="p-1 truncate w-48"><%= r.name %></td>
+        <td class="p-1 truncate"><%= r.description %></td>
+      </tr>
+      <% end %>
+    </table>
+    <button class="py-1 px-4 bg-blue-500 font-bold text-white text-center
+               my-4
+               self-center
+               flex-grow-0
+               disabled:bg-gray-300 disabled:cursor-default"
+      <%= if @selected_idx == nil do %>
+      disabled
+      <% else %>
+      phx-click="use_part"
+      <% end %>>
+      Use part
+    </button>
+  </div>
+
+  <% end %>
+</div>

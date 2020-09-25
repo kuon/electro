@@ -18,6 +18,7 @@ defmodule ElectroWeb.Router do
     pipe_through :browser
 
     live "/", PartLive.Index, :index
+    live "/c/:cat_id/add", PartLive.Add, :index
   end
 
   # Other scopes may use custom stacks.

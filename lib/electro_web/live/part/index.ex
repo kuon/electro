@@ -2,7 +2,11 @@ defmodule ElectroWeb.PartLive.Index do
   use Phoenix.LiveView,
     container: {:div, class: "max-h-full flex w-full max-w-full h-full"}
 
+  alias ElectroWeb.Router.Helpers, as: Routes
+
   alias ElectroWeb.PartView
+  alias Electro.Inventory
+  alias Electro.Octopart
 
   def render(assigns), do: PartView.render("index.html", assigns)
 
@@ -16,7 +20,7 @@ defmodule ElectroWeb.PartLive.Index do
   end
 
   def mount(_params, _, socket) do
-    inv = Electro.walk_inventory()
+    inv = Inventory.inventory()
     {:ok, assign(init(socket), inv)}
   end
 
@@ -25,14 +29,14 @@ defmodule ElectroWeb.PartLive.Index do
   end
 
   def handle_event("select_category", %{"id" => id}, socket) do
-    res = Electro.parts_in_category(socket.assigns, id)
+    res = Inventory.parts_in_category(id)
 
     {:noreply,
      assign(socket, selected_category_id: id, results: res, query: nil)}
   end
 
   def handle_event("search", %{"q" => q}, socket) do
-    res = Electro.parts_with_query(socket.assigns, q)
+    res = Inventory.parts_with_query(q)
 
     {:noreply,
      assign(socket, selected_category_id: nil, results: res, query: q)}
@@ -46,5 +50,16 @@ defmodule ElectroWeb.PartLive.Index do
     {:ok, path} = Base.decode64(path)
     System.cmd("rifle", [path])
     {:noreply, socket}
+  end
+
+  def handle_event("add_part", _, socket) do
+    path =
+      Routes.part_add_path(socket, :index, socket.assigns.selected_category_id)
+
+    {:noreply, redirect(socket, to: path)}
+  end
+
+  def handle_event("add_category", _, socket) do
+    {:noreply, redirect(socket, to: "/add")}
   end
 end

@@ -22,6 +22,7 @@ import { Socket } from 'phoenix'
 import LiveSocket from 'phoenix_live_view'
 
 import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 
 const Hooks = {}
 

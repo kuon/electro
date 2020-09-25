@@ -1,0 +1,9 @@
+id = <%= inspect(@part.id) %>
+name = <%= inspect(@part.name) %>
+location = <%= inspect(@part.location) %>
+mpn = <%= inspect(@part.mpn) %>
+stock = <%= inspect(@part.stock) %>
+
+[specs]
+<%= for {k, v} <- @part.specs do %><%= inspect(k) %> = <%= inspect(v) %>
+<% end %>

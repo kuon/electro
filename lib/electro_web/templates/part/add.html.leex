@@ -1,0 +1,20 @@
+<div class="flex self-center flex-col w-full h-full justify-center bg-gray-100">
+  <div class="flex self-center border p-4 bg-white flex-col w-256">
+    <div class="flex justify-between">
+      <div class="flex w-32">
+        <button phx-click="browse"
+          class="bg-gray-500 text-white font-bold py-1 px-3 mb-4 self-start">←
+          Back</button>
+      </div>
+      <div class="font-bold text-xl"><%= @category.name %></div>
+      <div class="w-32"></div>
+    </div>
+
+    <%= if @page == :search do %>
+    <%= render "search.html", assigns %>
+    <% end %>
+    <%= if @page == :form do %>
+    <%= render "form.html", assigns %>
+    <% end %>
+  </div>
+</div>

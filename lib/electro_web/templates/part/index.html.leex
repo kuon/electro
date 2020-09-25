@@ -1,7 +1,16 @@
 <div class="flex max-h-full w-full">
   <div class="flex flex-col flex-shrink-0 min-w-64">
-    <div class="h-12 border-r-12 border-gray-200 p-1">
-      add category
+    <div class="h-12 border-r-12 border-gray-200 flex-shrink-0 py-2 px-2 flex">
+      <button class="py-1 px-2 bg-blue-500 font-bold text-white text-center
+               flex-grow
+               disabled:bg-gray-300 disabled:cursor-default"
+        <%= if @selected_category_id == nil do %>
+        disabled
+        <% else %>
+        phx-click="add_category"
+        <% end %>>
+        Add category
+      </button>
     </div>
     <ul class="flex flex-col flex-grow text-sm overflow-y-scroll scroller">
       <%= for id <- @categories do %>
@@ -12,7 +21,7 @@
       <% else %>
       cursor-pointer
       <% end %>
-      <li class="p-1 <%= klasses %>"
+      <li class="py-1 px-2 <%= klasses %>"
         style="margin-left: <%= indent %>em"
         phx-click="select_category"
         phx-value-id="<%= id %>"><%= c.name %></li>
@@ -21,9 +30,15 @@
   </div>
   <div class="flex flex-col flex-grow">
     <div class="p-2 flex w-full h-12 flex-shrink-0 border-r-12 border-gray-200">
-      <div class="p-1 mr-4">
-        add part
-      </div>
+      <button class="py-1 px-2 mr-4 bg-blue-500 font-bold text-white text-center
+               disabled:bg-gray-300 disabled:cursor-default"
+        <%= if @selected_category_id == nil do %>
+        disabled
+        <% else %>
+        phx-click="add_part"
+        <% end %>>
+        Add part
+      </button>
       <form phx-change="search"
         class="flex flex-grow">
         <input type="search"
@@ -53,7 +68,8 @@
       <% end %>
     </ul>
   </div>
-  <div class="flex flex-col w-128 max-w-128 flex-shrink-0 overflow-y-scroll scroller">
+  <div
+    class="flex flex-col w-128 max-w-128 flex-shrink-0 overflow-y-scroll scroller">
     <%= if @selected_part_id do %>
     <% p = @part_index[@selected_part_id] %>
     <%= f = form_for :part, "#", [phx_submit: :save_part, class: "flex flex-col"] %>
@@ -67,13 +83,21 @@
       %>
     </div>
     <% end %>
-    <%= submit "Save", class: "bg-blue-400 m-2 p-1 text-white font-bold" %>
+    <%= submit "Save", class: "bg-blue-500 m-2 p-1 text-white font-bold text-center" %>
     </form>
+    <div class="flex mb-4">
+      <div
+        class="bg-gray-500 text-white font-bold py-1 px-2 ml-2 text-center flex-grow">
+        Print label</div>
+      <div
+        class="bg-gray-500 text-white font-bold py-1 px-2 ml-2 mr-2 text-center flex-grow">
+        Open folder</div>
+    </div>
     <ul class="flex flex-col text-xs">
-      <%= for a <- p.attachements do %>
-        <li class="px-2 py-1 cursor-pointer underline text-blue-700"
-            phx-click="open_file"
-            phx-value-path="<%= a.path |> Base.encode64() %>"><%= a.name %></li>
+      <%= for d <- p.documents do %>
+      <li class="px-2 py-1 cursor-pointer underline text-blue-700"
+        phx-click="open_file"
+        phx-value-path="<%= d.path |> Base.encode64() %>"><%= d.name %></li>
       <% end %>
     </ul>
     <% else %>

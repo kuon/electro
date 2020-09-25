@@ -1,0 +1,16 @@
+<% p = @new_part %>
+<%= f = form_for :part, "#", [phx_submit: :create_part, class: "flex flex-col"] %>
+
+<%= for field <- [:id, :name, :mpn, :location, :description, :stock] do %>
+<div class="flex p-1">
+  <%= label f, field, class: "w-32 p-1" %>
+  <%= text_input f, field,
+      value: p[field],
+      readonly: field == :id,
+      class: "bg-gray-200 text-black p-1 flex-grow"
+  %>
+</div>
+<% end %>
+
+<%= submit "Create", class: "bg-blue-500 m-2 p-1 text-white font-bold text-center" %>
+</form>

@@ -36,7 +36,8 @@ inventory_path =
     """
 
 config :electro,
-  inventory_path: inventory_path
+  inventory_path: inventory_path,
+  octopart_token: System.get_env("OCTOPART_TOKEN")
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
