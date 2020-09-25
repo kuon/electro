@@ -43,7 +43,9 @@ defmodule Electro.MixProject do
       {:fuzzy_compare, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:toml, "~> 0.6.1"},
-      {:httpoison, "~> 1.0"}
+      {:httpoison, "~> 1.0"},
+      {:pdf, "~> 0.4"},
+      {:temp, "~> 0.4"}
     ]
   end
 

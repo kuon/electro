@@ -48,6 +48,7 @@ defmodule ElectroWeb.PartLive.Index do
 
   def handle_event("open_file", %{"path" => path}, socket) do
     {:ok, path} = Base.decode64(path)
+    # TODO allow configuration of that command
     System.cmd("rifle", [path])
     {:noreply, socket}
   end
@@ -61,5 +62,11 @@ defmodule ElectroWeb.PartLive.Index do
 
   def handle_event("add_category", _, socket) do
     {:noreply, redirect(socket, to: "/add")}
+  end
+
+  def handle_event("print_label", _, socket) do
+    part = socket.assigns.part_index[socket.assigns.selected_part_id]
+    Electro.Pdf.print_label(part)
+    {:noreply, socket}
   end
 end

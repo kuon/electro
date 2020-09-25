@@ -86,12 +86,14 @@
     <%= submit "Save", class: "bg-blue-500 m-2 p-1 text-white font-bold text-center" %>
     </form>
     <div class="flex mb-4">
-      <div
+      <button
+        phx-click="print_label"
         class="bg-gray-500 text-white font-bold py-1 px-2 ml-2 text-center flex-grow">
-        Print label</div>
-      <div
-        class="bg-gray-500 text-white font-bold py-1 px-2 ml-2 mr-2 text-center flex-grow">
-        Open folder</div>
+        Print label</button>
+      <button
+        phx-click="open_folder"
+        class="bg-gray-500 text-white font-bold py-1 px-2 ml-2 text-center flex-grow">
+        Open folder</button>
     </div>
     <ul class="flex flex-col text-xs">
       <%= for d <- p.documents do %>
