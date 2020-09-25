@@ -16,12 +16,9 @@ defmodule Electro.Octopart do
             descriptions {
               text
             }
-            document_collections {
-              name
-              documents {
+            best_datasheet {
                 url
                 name
-              }
             }
             specs {
               display_value
