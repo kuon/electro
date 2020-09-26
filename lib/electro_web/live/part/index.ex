@@ -13,37 +13,55 @@ defmodule ElectroWeb.PartLive.Index do
   def init(socket) do
     assign(socket,
       results: [],
-      selected_category_id: nil,
+      selected_category: nil,
       query: nil,
-      selected_part_id: nil
+      selected_part: nil
     )
   end
 
   def mount(_params, _, socket) do
-    inv = Inventory.inventory()
-    {:ok, assign(init(socket), inv)}
+    categories = Inventory.categories()
+    {:ok, assign(init(socket), categories: categories)}
   end
 
   def handle_params(_, _url, socket) do
     {:noreply, socket}
   end
 
+  def handle_event("save_part", %{"part" => params}, socket) do
+    part =
+      socket.assigns.selected_part
+      |> Map.merge(%{
+        name: params["name"],
+        mpn: params["mpn"],
+        location: params["location"],
+        description: params["description"],
+        stock: params["stock"]
+      })
+
+    {:ok, part} = Inventory.save_part(part)
+
+    {:noreply, assign(socket, selected_part: part)}
+  end
+
   def handle_event("select_category", %{"id" => id}, socket) do
+    cat = Inventory.category(id)
     res = Inventory.parts_in_category(id)
 
     {:noreply,
-     assign(socket, selected_category_id: id, results: res, query: nil)}
+     assign(socket, selected_category: cat, results: res, query: nil)}
   end
 
   def handle_event("search", %{"q" => q}, socket) do
     res = Inventory.parts_with_query(q)
 
     {:noreply,
-     assign(socket, selected_category_id: nil, results: res, query: q)}
+     assign(socket, selected_category: nil, results: res, query: q)}
   end
 
   def handle_event("select_part", %{"id" => id}, socket) do
-    {:noreply, assign(socket, selected_part_id: String.to_integer(id))}
+    part = Inventory.part_with_id(id)
+    {:noreply, assign(socket, selected_part: part)}
   end
 
   def handle_event("open_file", %{"path" => path}, socket) do
@@ -55,7 +73,7 @@ defmodule ElectroWeb.PartLive.Index do
 
   def handle_event("add_part", _, socket) do
     path =
-      Routes.part_add_path(socket, :index, socket.assigns.selected_category_id)
+      Routes.part_add_path(socket, :index, socket.assigns.selected_category.id)
 
     {:noreply, redirect(socket, to: path)}
   end
@@ -65,7 +83,7 @@ defmodule ElectroWeb.PartLive.Index do
   end
 
   def handle_event("print_label", _, socket) do
-    part = socket.assigns.part_index[socket.assigns.selected_part_id]
+    part = socket.assigns.selected_part
     Electro.Pdf.print_label(part)
     {:noreply, socket}
   end

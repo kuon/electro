@@ -2,7 +2,7 @@
 <%= for {ipn, r} <- @groups do %>
   <tr class="border">
     <td class="py-1 px-2 border-r">
-      <ul class="font-sm">
+      <ul class="text-sm">
       <%= for c <- r.components do %>
         <li><%= c.fields.ref %></li>
       <% end %>

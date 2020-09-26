@@ -21,6 +21,7 @@ defmodule ElectroWeb.Router do
     post "/b", BomController, :upload
     live "/", PartLive.Index, :index
     live "/c/:cat_id/add", PartLive.Add, :index
+    get "/x/reload", ExecController, :reload
   end
 
   # Other scopes may use custom stacks.

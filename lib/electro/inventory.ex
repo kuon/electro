@@ -8,12 +8,20 @@ defmodule Electro.Inventory do
     GenServer.start_link(__MODULE__, args, name: @name)
   end
 
+  def reload() do
+    GenServer.call(@name, :reload)
+  end
+
   def inventory() do
     GenServer.call(@name, :inventory)
   end
 
   def category(cat_id) do
     GenServer.call(@name, {:category, cat_id})
+  end
+
+  def categories() do
+    GenServer.call(@name, :categories)
   end
 
   def parts_in_category(cat_id) do
@@ -25,6 +33,10 @@ defmodule Electro.Inventory do
 
   def parts_with_query(query) do
     GenServer.call(@name, {:parts_with_query, query})
+  end
+
+  def part_with_id(id) when is_binary(id) do
+    part_with_id(String.to_integer(id))
   end
 
   def part_with_id(id) do
@@ -39,10 +51,19 @@ defmodule Electro.Inventory do
     GenServer.call(@name, {:create_part, part})
   end
 
+  def save_part(part) do
+    GenServer.call(@name, {:save_part, part})
+  end
+
   # Server (callbacks)
   @impl true
   def init(_args) do
     {:ok, do_walk()}
+  end
+
+  @impl true
+  def handle_call(:reload, _, _) do
+    {:reply, :ok, do_walk()}
   end
 
   @impl true
@@ -81,6 +102,23 @@ defmodule Electro.Inventory do
 
   @impl true
   def handle_call(
+        :categories,
+        _from,
+        %{
+          category_index: category_index
+        } = inventory
+      ) do
+        categories =
+        category_index
+        |> Map.values()
+        |> Enum.sort_by(fn cat ->
+          cat.path
+        end)
+    {:reply, categories, inventory}
+  end
+
+  @impl true
+  def handle_call(
         {:parts_in_category, cat_id},
         _from,
         %{
@@ -96,7 +134,6 @@ defmodule Electro.Inventory do
       end
     end)
     |> Enum.sort_by(fn p -> p.path end)
-    |> Enum.map(fn p -> p.id end)
     |> (&{:reply, &1, inventory}).()
   end
 
@@ -110,27 +147,51 @@ defmodule Electro.Inventory do
         } = inventory
       ) do
     Enum.reduce(part_index, [], fn {k, part}, res ->
-      sim =
+
+      sim = 
+        (
         case part.name do
           "" -> 0
           nil -> 0
           str -> FuzzyCompare.similarity(str, query)
         end
+        ) +
+        (
+        case part.mpn do
+          "" -> 0
+          nil -> 0
+          str -> FuzzyCompare.similarity(str, query)
+        end
+        ) +
+        (
+          if query == to_string(part.id) do
+            100
+          else
+            0
+          end
+        )
 
-      if sim > 0.6 do
+
+      if sim > 1 do
         [{sim, part} | res]
       else
         res
       end
     end)
     |> Enum.sort_by(fn {sim, p} -> sim end)
-    |> Enum.map(fn {sim, p} -> p.id end)
+    |> Enum.map(fn {sim, p} -> p end)
     |> Enum.reverse()
     |> (&{:reply, &1, inventory}).()
   end
 
   @impl true
   def handle_call({:create_part, part}, _from, inventory) do
+    {:ok, inventory, part} = do_save_part(inventory, part)
+    {:reply, {:ok, part}, inventory}
+  end
+
+  @impl true
+  def handle_call({:save_part, part}, _from, inventory) do
     {:ok, inventory, part} = do_save_part(inventory, part)
     {:reply, {:ok, part}, inventory}
   end

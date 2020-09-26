@@ -4,7 +4,7 @@
       <button class="py-1 px-2 bg-blue-500 font-bold text-white text-center
                flex-grow
                disabled:bg-gray-300 disabled:cursor-default"
-        <%= if @selected_category_id == nil do %>
+        <%= if @selected_category == nil do %>
         disabled
         <% else %>
         phx-click="add_category"
@@ -13,10 +13,9 @@
       </button>
     </div>
     <ul class="flex flex-col flex-grow text-sm overflow-y-scroll scroller">
-      <%= for id <- @categories do %>
-      <% c = @category_index[id] %>
+      <%= for c <- @categories do %>
       <% indent = c.depth * 1.2 %>
-      <% klasses = if id == @selected_category_id do %>
+      <% klasses = if @selected_category && c.id == @selected_category.id do %>
       bg-gray-200
       <% else %>
       cursor-pointer
@@ -24,7 +23,7 @@
       <li class="py-1 px-2 <%= klasses %>"
         style="margin-left: <%= indent %>em"
         phx-click="select_category"
-        phx-value-id="<%= id %>"><%= c.name %></li>
+        phx-value-id="<%= c.id %>"><%= c.name %></li>
       <% end %>
     </ul>
   </div>
@@ -32,7 +31,7 @@
     <div class="p-2 flex w-full h-12 flex-shrink-0 border-r-12 border-gray-200">
       <button class="py-1 px-2 mr-4 bg-blue-500 font-bold text-white text-center
                disabled:bg-gray-300 disabled:cursor-default"
-        <%= if @selected_category_id == nil do %>
+        <%= if @selected_category == nil do %>
         disabled
         <% else %>
         phx-click="add_part"
@@ -54,24 +53,23 @@
       <% [] -> %>
       <li class="px-2 py-1 font-bold">No result</li>
       <% res -> %>
-      <%= for id <- res do %>
-      <% p = @part_index[id] %>
-      <% klasses = if id == @selected_part_id do %>
+      <%= for p <- res do %>
+      <% klasses = if @selected_part && p.id == @selected_part.id do %>
       bg-gray-200
       <% else %>
       cursor-pointer
       <% end %>
       <li class="px-2 py-1 <%= klasses %>"
         phx-click="select_part"
-        phx-value-id="<%= id %>"><%= p.name %></li>
+        phx-value-id="<%= p.id %>"><%= p.name %></li>
       <% end %>
       <% end %>
     </ul>
   </div>
   <div
     class="flex flex-col w-128 max-w-128 flex-shrink-0 overflow-y-scroll scroller">
-    <%= if @selected_part_id do %>
-    <% p = @part_index[@selected_part_id] %>
+    <%= if @selected_part do %>
+    <% p = @selected_part %>
     <%= f = form_for :part, "#", [phx_submit: :save_part, class: "flex flex-col"] %>
     <%= for field <- [:id, :name, :mpn, :location, :description, :stock] do %>
     <div class="flex p-1">

@@ -40,6 +40,9 @@
             <a href="/s/">Settings</a>
           </li>
           <li class="bg-blue-400 flex-grow"></li>
+          <li class="<%= unsel %>">
+            <a href="/x/reload">Reload</a>
+          </li>
         </ul>
       </nav>
     </section>

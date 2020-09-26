@@ -5,6 +5,8 @@ mpn = <%= inspect(@part.mpn) %>
 stock = <%= inspect(@part.stock) %>
 description = <%= inspect(@part.description) %>
 
+<%= if @part[:specs] do %>
 [specs]
 <%= for {k, v} <- @part.specs do %><%= inspect(k) %> = <%= inspect(v) %>
+<% end %>
 <% end %>
