@@ -45,6 +45,7 @@ defmodule Electro.MixProject do
       {:toml, "~> 0.6.1"},
       {:httpoison, "~> 1.0"},
       {:pdf, "~> 0.4"},
+      {:csv, "~> 2.4"},
       {:temp, "~> 0.4"}
     ]
   end

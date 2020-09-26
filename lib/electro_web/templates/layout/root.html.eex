@@ -1,27 +1,53 @@
 <!DOCTYPE html>
-<html lang="en" class="max-h-full flex max-w-full w-full h-full">
-  <head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Electro · Phoenix Framework</title>
-    <%= csrf_meta_tag() %>
-    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
-    <script defer type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
-  </head>
-  <body class="max-h-full flex max-w-full w-full h-full">
-    <header>
-      <section>
-        <nav role="navigation">
-          <ul>
-            <li></li>
+<html lang="en"
+  class="max-h-full flex max-w-full w-full h-full">
 
-          </ul>
-        </nav>
-      </section>
-    </header>
-    <main role="main" class="max-h-full flex max-w-full w-full h-full">
-      <%= @inner_content %>
-    </main>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible"
+    content="IE=edge" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0" />
+  <title>Electro · Phoenix Framework</title>
+  <%= csrf_meta_tag() %>
+  <link rel="stylesheet"
+    href="<%= Routes.static_path(@conn, "/css/app.css") %>" />
+  <script defer
+    type="text/javascript"
+    src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
+</head>
+
+<body class="flex-col max-h-full flex max-w-full w-full h-full">
+  <header>
+    <section>
+      <nav role="navigation" class="print:hidden">
+        <div class="h-1 bg-blue-400"></div>
+        <ul class="flex">
+          <% sel = "text-blue-500 font-bold px-2 py-1" %>
+          <% unsel = "bg-blue-400 px-2 py-1 text-white font-bold" %>
+          <% page = case Phoenix.Controller.current_path(@conn) do
+               "/b/"<>_ -> :bom
+               "/s/"<>_ -> :settings
+               _ -> :parts
+             end %>
+          <li class="<%= if page == :parts do sel else unsel end %>">
+            <a href="/">Parts</a>
+          </li>
+          <li class="<%= if page == :bom do sel else unsel end %>">
+            <a href="/b/">BOMs</a>
+          </li>
+          <li class="<%= if page == :settings do sel else unsel end %>">
+            <a href="/s/">Settings</a>
+          </li>
+          <li class="bg-blue-400 flex-grow"></li>
+        </ul>
+      </nav>
+    </section>
+  </header>
+  <main role="main"
+    class="max-h-full flex max-w-full w-full h-full">
+    <%= @inner_content %>
+  </main>
+</body>
+
 </html>

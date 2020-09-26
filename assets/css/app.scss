@@ -4,6 +4,9 @@
 
 @tailwind utilities;
 
+* {
+  border-radius: 0;
+}
 
 .scroller {
   scrollbar-color: #666 rgba(237, 242, 247, 1);

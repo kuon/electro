@@ -79,7 +79,7 @@
       <%= text_input f, field,
           value: p[field],
           readonly: field == :id,
-          class: "bg-gray-200 text-black p-1 flex-grow"
+          class: "bg-gray-200 text-black p-1 flex-grow mr-1"
       %>
     </div>
     <% end %>
@@ -92,7 +92,7 @@
         Print label</button>
       <button
         phx-click="open_folder"
-        class="bg-gray-500 text-white font-bold py-1 px-2 ml-2 text-center flex-grow">
+        class="bg-gray-500 text-white font-bold py-1 px-2 ml-2 mr-2 text-center flex-grow">
         Open folder</button>
     </div>
     <ul class="flex flex-col text-xs">

@@ -27,6 +27,10 @@ defmodule Electro.Inventory do
     GenServer.call(@name, {:parts_with_query, query})
   end
 
+  def part_with_id(id) do
+    GenServer.call(@name, {:part_with_id, id})
+  end
+
   def next_id() do
     GenServer.call(@name, :next_id)
   end
@@ -49,6 +53,18 @@ defmodule Electro.Inventory do
   @impl true
   def handle_call(:next_id, _from, inventory) do
     {:reply, inventory.next_id, inventory}
+  end
+
+  @impl true
+  def handle_call(
+        {:part_with_id, id},
+        _from,
+        %{
+          part_index: part_index
+        } = inventory
+      ) do
+    part = Map.get(part_index, id)
+    {:reply, part, inventory}
   end
 
   @impl true

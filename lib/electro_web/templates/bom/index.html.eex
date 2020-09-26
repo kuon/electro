@@ -1,0 +1,18 @@
+<div class="p-1 flex justify-center w-full">
+  <%= f = form_tag("/b/",
+                   method: :post,
+                   multipart: true,
+                   class: "mt-16",
+                   id: "fileForm") %>
+    <div class="w-64 h-64 border-8 border-dashed relative flex items-center">
+      <p class="font-bold text-xl text-gray-500 text-center">
+        Drop file here or click to browse files
+      </p>
+      <input type="file"
+        name="file"
+        style="opacity:0"
+        class="inset-0 absolute"
+        onchange="document.getElementById('fileForm').submit()">
+    </div>
+  </form>
+</div>

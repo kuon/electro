@@ -1,0 +1,18 @@
+<table class="m-4">
+<%= for {ipn, r} <- @groups do %>
+  <tr class="border">
+    <td class="py-1 px-2 border-r">
+      <ul class="font-sm">
+      <%= for c <- r.components do %>
+        <li><%= c.fields.ref %></li>
+      <% end %>
+      </ul>
+    </td>
+    <td class="py-1 px-2 border-r align-top"><%= r.count %></td>
+    <td class="py-1 px-2 border-r align-top"><%= ipn %></td>
+    <td class="py-1 px-2 border-r align-top"><%= r.location %></td>
+    <td class="py-1 px-2 border-r align-top"><%= r.mpn %></td>
+    <td class="py-1 px-2 border-r align-top"><%= r.name %></td>
+  </tr>
+<% end %>
+</table>

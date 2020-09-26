@@ -17,6 +17,8 @@ defmodule ElectroWeb.Router do
   scope "/", ElectroWeb do
     pipe_through :browser
 
+    get "/b", BomController, :index
+    post "/b", BomController, :upload
     live "/", PartLive.Index, :index
     live "/c/:cat_id/add", PartLive.Add, :index
   end
