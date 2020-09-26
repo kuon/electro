@@ -1,8 +1,8 @@
-<table class="m-4">
+<table class="m-4 text-sm">
 <%= for {ipn, r} <- @groups do %>
   <tr class="border">
-    <td class="py-1 px-2 border-r">
-      <ul class="text-sm">
+    <td class="py-1 px-2 border-r align-top">
+      <ul>
       <%= for c <- r.components do %>
         <li><%= c.fields.ref %></li>
       <% end %>
