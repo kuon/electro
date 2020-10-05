@@ -41,22 +41,27 @@ defmodule ElectroWeb.PartLive.Index do
 
     {:ok, part} = Inventory.save_part(part)
 
-    {:noreply, assign(socket, selected_part: part)}
+    res =
+      socket.assigns.selected_category
+      |> case do
+        nil -> []
+        cat -> Inventory.parts_in_category(cat.id)
+      end
+
+    {:noreply, assign(socket, selected_part: part, results: res)}
   end
 
   def handle_event("select_category", %{"id" => id}, socket) do
     cat = Inventory.category(id)
     res = Inventory.parts_in_category(id)
 
-    {:noreply,
-     assign(socket, selected_category: cat, results: res, query: nil)}
+    {:noreply, assign(socket, selected_category: cat, results: res, query: nil)}
   end
 
   def handle_event("search", %{"q" => q}, socket) do
     res = Inventory.parts_with_query(q)
 
-    {:noreply,
-     assign(socket, selected_category: nil, results: res, query: q)}
+    {:noreply, assign(socket, selected_category: nil, results: res, query: q)}
   end
 
   def handle_event("select_part", %{"id" => id}, socket) do
@@ -79,7 +84,10 @@ defmodule ElectroWeb.PartLive.Index do
   end
 
   def handle_event("add_category", _, socket) do
-    {:noreply, redirect(socket, to: "/add")}
+    path =
+      Routes.category_add_path(socket, :index, socket.assigns.selected_category.id)
+
+    {:noreply, redirect(socket, to: path)}
   end
 
   def handle_event("print_label", _, socket) do

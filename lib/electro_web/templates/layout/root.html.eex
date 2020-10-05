@@ -18,8 +18,8 @@
 </head>
 
 <body class="flex-col max-h-full flex max-w-full w-full h-full">
-  <header>
-    <section>
+  <header class="flex flex-shrink-0 w-full">
+    <section class="w-full">
       <nav role="navigation" class="print:hidden">
         <div class="h-1 bg-blue-400"></div>
         <ul class="flex">
@@ -48,7 +48,7 @@
     </section>
   </header>
   <main role="main"
-    class="max-h-full flex max-w-full w-full h-full">
+    class="flex max-w-full w-full flex-shrink h-12 flex-grow">
     <%= @inner_content %>
   </main>
 </body>

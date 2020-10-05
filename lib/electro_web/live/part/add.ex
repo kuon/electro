@@ -52,7 +52,11 @@ defmodule ElectroWeb.PartLive.Add do
     {:noreply,
      assign(socket,
        page: :form,
-       new_part: Map.merge(new_part(), %{mpn: socket.assigns.query})
+       new_part:
+         Map.merge(new_part(), %{
+           name: socket.assigns.query,
+           mpn: socket.assigns.query
+         })
      )}
   end
 

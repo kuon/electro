@@ -20,7 +20,8 @@ defmodule ElectroWeb.Router do
     get "/b", BomController, :index
     post "/b", BomController, :upload
     live "/", PartLive.Index, :index
-    live "/c/:cat_id/add", PartLive.Add, :index
+    live "/p/:cat_id/add", PartLive.Add, :index
+    live "/c/:cat_id/add", CategoryLive.Add, :index
     get "/x/reload", ExecController, :reload
   end
 

@@ -1,6 +1,7 @@
 <p class="mb-2 font-bold">Search Octopart</p>
+<div class="flex">
 <form phx-submit="search"
-  phx-update="set_query"
+  phx-change="set_query"
   class="flex flex-grow">
   <input type="search"
     name="q"
@@ -9,10 +10,11 @@
     class="text-black bg-gray-200 py-1 px-3 flex-grow">
 
   <%= submit "Search", class: "bg-blue-500 ml-2 py-1 px-3 text-white font-bold text-center" %>
-  <button phx-click="new_part"
-    class="bg-gray-500 text-white font-bold py-1 px-3 ml-2 self-start">
-    Add part manually</button>
 </form>
+<button phx-click="new_part"
+  class="bg-gray-500 text-white font-bold py-1 px-3 ml-2 self-start">
+  Add part manually</button>
+</div>
 <div class="h-56 min-h-56 flex-shrink-0 flex justify-center mt-8">
   <%= case @results do %>
   <% [] -> %>

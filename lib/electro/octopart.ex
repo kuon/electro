@@ -69,13 +69,17 @@ defmodule Electro.Octopart do
     end
   end
 
-  defp map_results(%{"data" => %{"search" => %{"results" => results}}}) do
+  defp map_results(%{"data" => %{"search" => %{"results" => results}}})
+       when is_list(results) do
     results
     |> Enum.map(fn %{"part" => part} ->
       %{
         mpn: part["mpn"],
         name: part["mpn"],
-        description: part["descriptions"] |> Enum.map(& &1["text"]) |> hd,
+        description:
+          part["descriptions"]
+          |> Enum.map(& &1["text"])
+          |> List.first(),
         manufacturer: part["manufacturer"]["name"],
         specs:
           part["specs"]

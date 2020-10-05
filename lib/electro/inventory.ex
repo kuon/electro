@@ -55,6 +55,10 @@ defmodule Electro.Inventory do
     GenServer.call(@name, {:save_part, part})
   end
 
+  def create_category(parent, name) do
+    GenServer.call(@name, {:create_category, parent, name})
+  end
+
   # Server (callbacks)
   @impl true
   def init(_args) do
@@ -74,6 +78,38 @@ defmodule Electro.Inventory do
   @impl true
   def handle_call(:next_id, _from, inventory) do
     {:reply, inventory.next_id, inventory}
+  end
+
+  @impl true
+  def handle_call(
+        {:create_category, parent, name},
+        _from,
+        %{
+          categories: categories,
+          category_index: category_index
+        } = inventory
+      ) do
+    name = escape_path(name)
+    path = Path.join(parent.path, name)
+    id = hash(path)
+
+    category_index
+    |> Map.get(id)
+    |> case do
+      nil ->
+        inventory =
+          inventory
+          |> do_add_category(path)
+          |> do_consolidate()
+
+        cat = Map.get(inventory.category_index, id)
+        :ok = File.mkdir_p(cat.path)
+
+        {:reply, cat, inventory}
+
+      cat ->
+        {:reply, cat, inventory}
+    end
   end
 
   @impl true
@@ -108,12 +144,13 @@ defmodule Electro.Inventory do
           category_index: category_index
         } = inventory
       ) do
-        categories =
-        category_index
-        |> Map.values()
-        |> Enum.sort_by(fn cat ->
-          cat.path
-        end)
+    categories =
+      category_index
+      |> Map.values()
+      |> Enum.sort_by(fn cat ->
+        cat.path
+      end)
+
     {:reply, categories, inventory}
   end
 
@@ -147,30 +184,22 @@ defmodule Electro.Inventory do
         } = inventory
       ) do
     Enum.reduce(part_index, [], fn {k, part}, res ->
-
-      sim = 
-        (
+      sim =
         case part.name do
           "" -> 0
           nil -> 0
           str -> FuzzyCompare.similarity(str, query)
-        end
-        ) +
-        (
-        case part.mpn do
-          "" -> 0
-          nil -> 0
-          str -> FuzzyCompare.similarity(str, query)
-        end
-        ) +
-        (
+        end +
+          case part.mpn do
+            "" -> 0
+            nil -> 0
+            str -> FuzzyCompare.similarity(str, query)
+          end +
           if query == to_string(part.id) do
             100
           else
             0
           end
-        )
-
 
       if sim > 1 do
         [{sim, part} | res]
@@ -223,26 +252,46 @@ defmodule Electro.Inventory do
 
     toml = Phoenix.View.render(ElectroWeb.PartView, "part.toml", part: part)
 
-    File.write!(toml_path, toml)
-
     inventory =
       if is_update do
+        File.write!(toml_path, toml)
+
         Map.merge(inventory, %{
           part_index: Map.put(inventory.part_index, part.id, part)
         })
       else
-        do_add_part(inventory, toml_path)
-        |> Map.merge(%{
-          next_id: inventory.next_id + 1
-        })
+        # Name has changed
+        inventory.part_index
+        |> Map.get(part.id)
+        |> case do
+          nil ->
+            File.write!(toml_path, toml)
+
+            do_add_part(inventory, toml_path)
+            |> Map.merge(%{
+              next_id: inventory.next_id + 1
+            })
+
+          old_part ->
+            {:ok, _} = File.rm_rf(Path.dirname(toml_path))
+
+            :ok =
+              File.rename(Path.dirname(old_part.path), Path.dirname(toml_path))
+
+            File.write!(toml_path, toml)
+
+            Map.merge(inventory, %{
+              part_index: Map.put(inventory.part_index, part.id, part)
+            })
+        end
       end
 
     {:ok, inventory, part}
   end
 
-  defp do_download_documents(part) do
+  defp do_download_documents(%{documents: documents} = part) do
     docs =
-      part.documents
+      documents
       |> Enum.map(fn doc ->
         case doc do
           %{name: name, url: url} ->
@@ -279,6 +328,8 @@ defmodule Electro.Inventory do
 
     Map.put(part, :documents, docs)
   end
+
+  defp do_download_documents(part), do: part
 
   defp do_walk() do
     inv_path = Application.get_env(:electro, :inventory_path)
