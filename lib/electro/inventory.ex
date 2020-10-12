@@ -188,12 +188,20 @@ defmodule Electro.Inventory do
         case part.name do
           "" -> 0
           nil -> 0
-          str -> FuzzyCompare.similarity(str, query)
+          str -> FuzzyCompare.similarity(str, query) * 2
         end +
           case part.mpn do
-            "" -> 0
-            nil -> 0
-            str -> FuzzyCompare.similarity(str, query)
+            "" ->
+              0
+
+            nil ->
+              0
+
+            str ->
+              String.contains?(
+                String.downcase(part.mpn),
+                String.downcase(query)
+              )
           end +
           if query == to_string(part.id) do
             100
