@@ -8,7 +8,7 @@
     content="IE=edge" />
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0" />
-  <title>Electro · Phoenix Framework</title>
+  <title>Electro</title>
   <%= csrf_meta_tag() %>
   <link rel="stylesheet"
     href="<%= Routes.static_path(@conn, "/css/app.css") %>" />
