@@ -9,28 +9,6 @@ https://github.com/kuon/WhyILeftGithub/blob/main/README.md
 
 ----
 
-
-# THIS REPOSITORY HAS MOVED
-
-New URL: https://git.goyman.com/kuon/electro
-
-Why I moved everything out of GitHub:
-
-https://github.com/kuon/WhyILeftGithub/blob/main/README.md
-
-----
-
-
-# THIS REPOSITORY HAS MOVED
-
-New URL: https://git.goyman.com/kuon/electro
-
-Why I moved everything out of GitHub:
-
-https://github.com/kuon/WhyILeftGithub/blob/main/README.md
-
-----
-
 # Electro
 
 To start your Phoenix server:
